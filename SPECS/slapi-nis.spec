@@ -11,14 +11,15 @@
 
 Name:		slapi-nis
 Version:	0.60.0
-Release:	3%{?dist}
+Release:	4%{?dist}
 Summary:	NIS Server and Schema Compatibility plugins for Directory Server
 Group:		System Environment/Daemons
 License:	GPLv3
 URL:		http://pagure.io/slapi-nis/
 Source0:	https://releases.pagure.org/slapi-nis/slapi-nis-%{version}.tar.gz
 Source1:	https://releases.pagure.org/slapi-nis/slapi-nis-%{version}.tar.gz.asc
-Patch0:         slapi-nis-bz2183953.patch
+Patch0:         slapi-nis-bz2183469.patch
+Patch1:         slapi-nis-RHEL-5134.patch
 
 BuildRequires:  make
 BuildRequires:  autoconf
@@ -59,6 +60,7 @@ for attributes from multiple entries in the tree.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 autoconf --force
@@ -87,13 +89,18 @@ make check
 %{_sbindir}/nisserver-plugin-defs
 
 %changelog
+* Tue Oct 10 2023 Alexander Bokovoy <abokovoy@redhat.com> - 0.60.0-4
+- Ignore updates from non-tracked subtrees during modify/modrdn/update
+  to avoid deadlocks with retro changelog
+- Resolves: RHEL-11984
+
 * Mon Apr 24 2023 Alexander Bokovoy <abokovoy@redhat.com> - 0.60.0-3
 - Also handle base searches within the compat tree
 - Related: rhbz#2183469
 
 * Wed Apr 12 2023 Alexander Bokovoy <abokovoy@redhat.com> - 0.60.0-2
 - Fix base DN searches outside the compat tree
-- Resolves: rhbz#2183953
+- Resolves: rhbz#2183469
 
 * Sat Aug 20 2022 Alexander Bokovoy <abokovoy@redhat.com> - 0.60.0-1
 - upstream release 0.60.0
